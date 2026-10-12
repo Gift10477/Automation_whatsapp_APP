@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import confetti from 'canvas-confetti';
 import { Navbar } from './components/Navbar';
 import { BatchInputCard } from './components/BatchInputCard';
 import { ConfigurationPanel } from './components/ConfigurationPanel';
@@ -24,7 +23,6 @@ const INITIAL_SETTINGS: DispatchSettings = {
   maxDelaySec: 18,
   dispatchMethod: 'whatsapp_web',
   windowTargetMode: 'reuse_tab',
-  soundAlerts: true,
   autoOpenNext: true,
   antiSpamLevel: 'high',
   autoDeleteOnSend: true,
@@ -312,16 +310,7 @@ export default function App() {
   };
 
   const handleCompleteAll = () => {
-    try {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
-    } catch {
-      // Ignore
-    }
-    showToast('All messages in the queue have been processed! Great job!', 'success');
+    showToast('All messages in the queue have been dispatched!', 'success');
   };
 
   // CSV Export

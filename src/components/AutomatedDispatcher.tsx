@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Play, Pause, SkipForward, CheckCircle, ExternalLink, ShieldCheck, Clock, Send, MessageCircle, Layers, Link as LinkIcon, RefreshCw, Zap, Lock } from 'lucide-react';
 import { Recipient, DispatchSettings, DispatchProgress } from '../types';
-import { buildDispatchUrl, dispatchWhatsAppLink, getRandomInterval, sounds } from '../utils/whatsappHelper';
+import { buildDispatchUrl, dispatchWhatsAppLink, getRandomInterval } from '../utils/whatsappHelper';
 import { maskPhoneNumber } from '../utils/phoneParser';
 
 interface AutomatedDispatcherProps {
@@ -34,17 +34,6 @@ export const AutomatedDispatcher: React.FC<AutomatedDispatcherProps> = ({
   const hasNext = Boolean(currentRecipient);
   const percentComplete = recipients.length > 0 ? Math.round((sentCount / recipients.length) * 100) : 0;
 
-  // Sound effects helper
-  const triggerTick = () => {
-    if (settings.soundAlerts) sounds.playTick();
-  };
-  const triggerSuccess = () => {
-    if (settings.soundAlerts) sounds.playSuccessChime();
-  };
-  const triggerPop = () => {
-    if (settings.soundAlerts) sounds.playPop();
-  };
-
   // Dispatch current recipient to WhatsApp complying with tab reuse rules
   const executeSend = (recipient: Recipient) => {
     const url = buildDispatchUrl(settings.dispatchMethod, recipient.phoneDigits, recipient.message);
@@ -52,7 +41,6 @@ export const AutomatedDispatcher: React.FC<AutomatedDispatcherProps> = ({
 
     // Dispatches via single persistent tab or native protocol
     dispatchWhatsAppLink(url, settings.dispatchMethod, settings.windowTargetMode);
-    triggerPop();
 
     // Mark as sent
     onMarkStatus(recipient.id, 'sent');
@@ -76,7 +64,6 @@ export const AutomatedDispatcher: React.FC<AutomatedDispatcherProps> = ({
         currentRecipientId: null,
         countdownSec: 0,
       });
-      triggerSuccess();
       onCompleteAll();
     }
   };
@@ -99,11 +86,7 @@ export const AutomatedDispatcher: React.FC<AutomatedDispatcherProps> = ({
         countdownSec: Math.max(0, progress.countdownSec - 1),
       });
 
-      if (progress.countdownSec > 1) {
-        if (progress.countdownSec <= 3) {
-          triggerTick();
-        }
-      } else if (progress.countdownSec <= 1) {
+      if (progress.countdownSec <= 1) {
         // Interval completed!
         if (settings.autoOpenNext && currentRecipient) {
           executeSend(currentRecipient);

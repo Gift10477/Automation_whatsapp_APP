@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Shield, Clock, Volume2, Sparkles, RefreshCw, Link as LinkIcon, User, Layers, Monitor, CheckCircle, Info, Lock, Eye } from 'lucide-react';
+import { Settings, Shield, Clock, Sparkles, RefreshCw, Link as LinkIcon, User, Layers, Monitor, CheckCircle, Info, Lock, Eye } from 'lucide-react';
 import { DispatchSettings } from '../types';
 
 interface ConfigurationPanelProps {
@@ -164,19 +164,6 @@ export const ConfigurationPanel: React.FC<ConfigurationPanelProps> = ({
                     className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
                   />
                   <span>Auto-launch next message when countdown finishes</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-700 select-none">
-                  <input
-                    type="checkbox"
-                    checked={settings.soundAlerts}
-                    onChange={(e) => onUpdateSettings({ soundAlerts: e.target.checked })}
-                    className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                  />
-                  <span className="flex items-center gap-1">
-                    <Volume2 className="w-3.5 h-3.5 text-slate-500" />
-                    Play audio chime on send & interval countdown
-                  </span>
                 </label>
               </div>
             </div>

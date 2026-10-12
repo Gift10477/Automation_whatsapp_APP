@@ -16,14 +16,14 @@ Automated, personalized WhatsApp notification and membership renewal dispatch to
 - **Safe Randomized Dispatch Delays:** Configurable delays (e.g. 8–18 seconds) between dispatches to respect WhatsApp rate limits and avoid spam flagging.
 - **WhatsApp Web & Desktop Protocol:** Direct `wa.me` links with URL-encoded messages and tab reuse for seamless single-click or semi-automated dispatches.
 - **Batch Import & Phone Sanitizer:** Paste member lists in various formats (TSV, CSV, raw text) and automatically sanitize international phone formats (e.g. `+254...`).
-- **Real-time Metrics:** Live tracking of sent, pending, and skipped dispatches with auditory alerts and confetti celebration upon completion.
+- **Real-time Metrics:** Live tracking of sent, pending, and skipped dispatches with clean status updates.
 - **GitHub Pages Ready:** Automated CI/CD pipeline using GitHub Actions to deploy on every push to `main`.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React 19, TypeScript, Tailwind CSS v4, Motion, Lucide React, Canvas Confetti
+- **Frontend:** React 19, TypeScript, Tailwind CSS v4, Motion, Lucide React
 - **Build Tool:** Vite 8
 - **Deployment:** GitHub Pages via GitHub Actions
 

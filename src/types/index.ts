@@ -23,7 +23,6 @@ export interface DispatchSettings {
   maxDelaySec: number;
   dispatchMethod: DispatchLinkMethod;
   windowTargetMode: WindowTargetMode;
-  soundAlerts: boolean;
   autoOpenNext: boolean;
   antiSpamLevel: 'high' | 'ultra' | 'natural';
   autoDeleteOnSend: boolean;
