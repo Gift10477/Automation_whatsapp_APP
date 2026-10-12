@@ -1,26 +1,31 @@
 import React, { useState } from 'react';
-import { Search, ExternalLink, RefreshCw, Copy, Check, Trash2, CheckCircle2, Clock, SkipForward, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ExternalLink, RefreshCw, Copy, Check, Trash2, CheckCircle2, Clock, SkipForward, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { Recipient, DispatchSettings } from '../types';
 import { buildDispatchUrl, dispatchWhatsAppLink } from '../utils/whatsappHelper';
+import { maskPhoneNumber } from '../utils/phoneParser';
 
 interface RecipientsTableProps {
   recipients: Recipient[];
   settings: DispatchSettings;
+  purgedCount?: number;
   onUpdateRecipient: (id: string, updates: Partial<Recipient>) => void;
   onDeleteRecipient: (id: string) => void;
   onRegenerateSingle: (id: string) => void;
   onResetAllStatus: () => void;
   onMarkAllSent: () => void;
+  onMarkStatus: (id: string, status: Recipient['status']) => void;
 }
 
 export const RecipientsTable: React.FC<RecipientsTableProps> = ({
   recipients,
   settings,
+  purgedCount = 0,
   onUpdateRecipient,
   onDeleteRecipient,
   onRegenerateSingle,
   onResetAllStatus,
   onMarkAllSent,
+  onMarkStatus,
 }) => {
   const [search, setSearch] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'sent' | 'skipped'>('all');
@@ -46,7 +51,7 @@ export const RecipientsTable: React.FC<RecipientsTableProps> = ({
   const handleLaunchWhatsApp = (r: Recipient) => {
     const url = buildDispatchUrl(settings.dispatchMethod, r.phoneDigits, r.message);
     dispatchWhatsAppLink(url, settings.dispatchMethod, settings.windowTargetMode);
-    onUpdateRecipient(r.id, { status: 'sent', sentAt: new Date().toISOString() });
+    onMarkStatus(r.id, 'sent');
   };
 
   const counts = {
@@ -61,9 +66,17 @@ export const RecipientsTable: React.FC<RecipientsTableProps> = ({
       {/* Table Header Controls */}
       <div className="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
         <div className="flex items-center gap-3">
-          <h2 className="text-sm font-semibold text-slate-900">
-            Recipient Directory ({recipients.length})
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-slate-900">
+              Recipient Directory ({recipients.length})
+            </h2>
+            {purgedCount > 0 && (
+              <span className="text-[11px] bg-emerald-100 text-emerald-800 border border-emerald-300/80 px-2 py-0.5 rounded-full font-medium flex items-center gap-1" title="Numbers permanently shredded from memory after sending">
+                <Lock className="w-3 h-3 text-emerald-600" />
+                {purgedCount} shredded
+              </span>
+            )}
+          </div>
 
           {/* Status Tabs */}
           <div className="flex items-center gap-1 bg-slate-200/60 p-0.5 rounded-lg text-xs">
@@ -168,9 +181,9 @@ export const RecipientsTable: React.FC<RecipientsTableProps> = ({
                       {/* Phone with + */}
                       <td className="py-3 px-4">
                         <span className="font-mono font-medium text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded">
-                          {r.phoneRaw}
+                          {settings.maskNumbersOnScreen ? maskPhoneNumber(r.phoneRaw) : r.phoneRaw}
                         </span>
-                        {r.countryCode && (
+                        {r.countryCode && !settings.maskNumbersOnScreen && (
                           <span className="text-slate-400 text-[10px] ml-1.5">{r.countryCode}</span>
                         )}
                       </td>

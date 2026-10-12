@@ -26,6 +26,9 @@ export interface DispatchSettings {
   soundAlerts: boolean;
   autoOpenNext: boolean;
   antiSpamLevel: 'high' | 'ultra' | 'natural';
+  autoDeleteOnSend: boolean;
+  maskNumbersOnScreen: boolean;
+  clearInputOnImport: boolean;
 }
 
 export interface DispatchProgress {

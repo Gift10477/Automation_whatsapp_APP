@@ -27,6 +27,9 @@ const INITIAL_SETTINGS: DispatchSettings = {
   soundAlerts: true,
   autoOpenNext: true,
   antiSpamLevel: 'high',
+  autoDeleteOnSend: true,
+  maskNumbersOnScreen: false,
+  clearInputOnImport: true,
 };
 
 export default function App() {
@@ -40,6 +43,7 @@ export default function App() {
   });
 
   const [recipients, setRecipients] = useState<Recipient[]>([]);
+  const [purgedCount, setPurgedCount] = useState<number>(0);
   const [isScriptModalOpen, setIsScriptModalOpen] = useState<boolean>(false);
   const [isGeneratingAI, setIsGeneratingAI] = useState<boolean>(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'info' | 'error'; text: string } | null>(null);
@@ -225,6 +229,7 @@ export default function App() {
     const parsed = parsePastedRecipients(rawText);
     const newRecipients = buildRecipientsFromParsed(parsed, settings);
     setRecipients(newRecipients);
+    setPurgedCount(0);
     setProgress({
       isActive: false,
       isPaused: false,
@@ -239,6 +244,7 @@ export default function App() {
 
   const handleClearAll = () => {
     setRecipients([]);
+    setPurgedCount(0);
     setProgress({
       isActive: false,
       isPaused: false,
@@ -248,7 +254,7 @@ export default function App() {
       totalDelayForCurrent: 0,
       lastSentAt: null,
     });
-    showToast('Cleared all recipients', 'info');
+    showToast('Secure Wipe: All personal phone numbers and recipient records purged from memory!', 'success');
   };
 
   const handleResetAllStatus = () => {
@@ -266,8 +272,14 @@ export default function App() {
   };
 
   const handleMarkAllSent = () => {
-    setRecipients(prev => prev.map(r => ({ ...r, status: 'sent', sentAt: new Date().toISOString() })));
-    showToast('Marked all members as sent', 'info');
+    if (settings.autoDeleteOnSend) {
+      setPurgedCount(prev => prev + recipients.length);
+      setRecipients([]);
+      showToast('All contacts dispatched and immediately purged from memory for privacy!', 'success');
+    } else {
+      setRecipients(prev => prev.map(r => ({ ...r, status: 'sent', sentAt: new Date().toISOString() })));
+      showToast('Marked all members as sent', 'info');
+    }
   };
 
   const handleUpdateRecipient = (id: string, updates: Partial<Recipient>) => {
@@ -279,9 +291,20 @@ export default function App() {
   };
 
   const handleMarkStatus = (id: string, status: Recipient['status']) => {
-    setRecipients(prev =>
-      prev.map(r => (r.id === id ? { ...r, status, sentAt: status === 'sent' ? new Date().toISOString() : r.sentAt } : r))
-    );
+    if (status === 'sent' && settings.autoDeleteOnSend) {
+      setRecipients(prev => {
+        const found = prev.find(r => r.id === id);
+        if (found) {
+          showToast(`Dispatched to ${found.name} · Personal number deleted from memory`, 'info');
+        }
+        return prev.filter(r => r.id !== id);
+      });
+      setPurgedCount(prev => prev + 1);
+    } else {
+      setRecipients(prev =>
+        prev.map(r => (r.id === id ? { ...r, status, sentAt: status === 'sent' ? new Date().toISOString() : r.sentAt } : r))
+      );
+    }
   };
 
   const handleUpdateProgress = (newProgress: Partial<DispatchProgress>) => {
@@ -342,12 +365,17 @@ export default function App() {
       {/* Top Navigation */}
       <Navbar
         totalCount={recipients.length}
-        sentCount={sentCount}
+        sentCount={settings.autoDeleteOnSend ? purgedCount : sentCount}
+        purgedCount={purgedCount}
+        autoDeleteEnabled={settings.autoDeleteOnSend}
+        maskNumbersOnScreen={settings.maskNumbersOnScreen}
         uniquenessScore={uniquenessMetrics.percentage}
         onOpenScriptModal={() => setIsScriptModalOpen(true)}
         onExportCsv={handleExportCsv}
         onLoadSamples={() => handleImportText(SAMPLE_MEMBERS_RAW)}
         onRegenerateAll={handleRegenerateAllVariations}
+        onToggleMask={() => handleUpdateSettings({ maskNumbersOnScreen: !settings.maskNumbersOnScreen })}
+        onClearAll={handleClearAll}
       />
 
       {/* Toast Notification */}
@@ -384,6 +412,7 @@ export default function App() {
           onImport={handleImportText}
           onClear={handleClearAll}
           currentCount={recipients.length}
+          clearInputOnImport={settings.clearInputOnImport}
         />
 
         {/* Configuration: Sender Name, STCU Org, Form Link, Intervals, Spintax Controls */}
@@ -400,11 +429,13 @@ export default function App() {
         <RecipientsTable
           recipients={recipients}
           settings={settings}
+          purgedCount={purgedCount}
           onUpdateRecipient={handleUpdateRecipient}
           onDeleteRecipient={handleDeleteRecipient}
           onRegenerateSingle={handleRegenerateSingle}
           onResetAllStatus={handleResetAllStatus}
           onMarkAllSent={handleMarkAllSent}
+          onMarkStatus={handleMarkStatus}
         />
       </main>
 

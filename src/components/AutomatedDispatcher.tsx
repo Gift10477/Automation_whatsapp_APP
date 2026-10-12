@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Play, Pause, SkipForward, CheckCircle, ExternalLink, ShieldCheck, Clock, Send, MessageCircle, Layers, Link as LinkIcon, RefreshCw, Zap } from 'lucide-react';
+import { Play, Pause, SkipForward, CheckCircle, ExternalLink, ShieldCheck, Clock, Send, MessageCircle, Layers, Link as LinkIcon, RefreshCw, Zap, Lock } from 'lucide-react';
 import { Recipient, DispatchSettings, DispatchProgress } from '../types';
 import { buildDispatchUrl, dispatchWhatsAppLink, getRandomInterval, sounds } from '../utils/whatsappHelper';
+import { maskPhoneNumber } from '../utils/phoneParser';
 
 interface AutomatedDispatcherProps {
   recipients: Recipient[];
@@ -200,12 +201,20 @@ export const AutomatedDispatcher: React.FC<AutomatedDispatcherProps> = ({
               <span className="text-slate-400">New Tab Mode</span>
             )}
           </span>
+          {settings.autoDeleteOnSend && (
+            <>
+              <span className="text-slate-600 hidden sm:inline">|</span>
+              <span className="text-xs text-emerald-300 font-medium flex items-center gap-1">
+                <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                Zero-Retention Mode (Purge on Send)
+              </span>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-400">Completed:</span>
-          <strong className="text-emerald-400">{sentCount} / {recipients.length} members</strong>
-          <span className="text-slate-500">({percentComplete}%)</span>
+          <span className="text-slate-400">Queue:</span>
+          <strong className="text-emerald-400">{recipients.length} pending members</strong>
         </div>
       </div>
 
@@ -389,9 +398,9 @@ export const AutomatedDispatcher: React.FC<AutomatedDispatcherProps> = ({
               <div className="flex items-center gap-2 text-xs">
                 <span className="text-slate-400">Phone:</span>
                 <span className="font-mono text-emerald-400 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                  {currentRecipient.phoneRaw}
+                  {settings.maskNumbersOnScreen ? maskPhoneNumber(currentRecipient.phoneRaw) : currentRecipient.phoneRaw}
                 </span>
-                {currentRecipient.countryCode && (
+                {currentRecipient.countryCode && !settings.maskNumbersOnScreen && (
                   <span className="text-slate-400 text-[11px]">{currentRecipient.countryCode}</span>
                 )}
               </div>

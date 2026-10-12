@@ -210,3 +210,16 @@ Sarah Muthoni, +254701234564
 Brian Kiprop, +254715678905
 Amina Hassan, +254728112233
 Peter Njoroge, +254790445566`;
+
+/**
+ * Masks a phone number for on-screen privacy (e.g. +254 712 ••• •71)
+ */
+export function maskPhoneNumber(phoneRaw: string): string {
+  if (!phoneRaw) return '';
+  const digits = phoneRaw.replace(/\D/g, '');
+  if (digits.length <= 4) return '••••••';
+  const prefix = phoneRaw.startsWith('+') ? `+${digits.slice(0, 3)}` : digits.slice(0, 3);
+  const suffix = digits.slice(-2);
+  return `${prefix} ••• ••• •${suffix}`;
+}
+

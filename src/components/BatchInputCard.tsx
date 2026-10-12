@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { Users, ClipboardPaste, Sparkles, CheckCircle2, AlertCircle, Trash2, ArrowRight } from 'lucide-react';
+import { Users, ClipboardPaste, Sparkles, CheckCircle2, AlertCircle, Trash2, ArrowRight, ShieldCheck, Lock } from 'lucide-react';
 import { parsePastedRecipients, SAMPLE_MEMBERS_RAW } from '../utils/phoneParser';
 
 interface BatchInputCardProps {
   onImport: (rawText: string) => void;
   onClear: () => void;
   currentCount: number;
+  clearInputOnImport?: boolean;
 }
 
 export const BatchInputCard: React.FC<BatchInputCardProps> = ({
   onImport,
   onClear,
   currentCount,
+  clearInputOnImport = true,
 }) => {
   const [inputText, setInputText] = useState<string>(SAMPLE_MEMBERS_RAW);
   const [showHelper, setShowHelper] = useState<boolean>(false);
@@ -31,6 +33,9 @@ export const BatchInputCard: React.FC<BatchInputCardProps> = ({
   const handleApply = () => {
     if (inputText.trim()) {
       onImport(inputText);
+      if (clearInputOnImport) {
+        setInputText('');
+      }
     }
   };
 
@@ -106,6 +111,14 @@ Or copy two columns straight from Excel!`}
             rows={7}
             className="w-full font-mono text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg p-3 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-slate-400 resize-y"
           />
+        </div>
+
+        {/* Security & Zero-Retention Notice */}
+        <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50/80 border border-emerald-200 rounded-lg text-emerald-900 text-xs">
+          <Lock className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+          <div className="text-[11px] leading-snug">
+            <strong>Zero-Retention Privacy:</strong> Personal numbers remain strictly inside browser memory and are permanently deleted once messages are sent. No information is stored on servers or in databases.
+          </div>
         </div>
 
         {/* Live Detection Summary Bar */}

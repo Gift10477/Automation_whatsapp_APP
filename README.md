@@ -9,6 +9,10 @@ Automated, personalized WhatsApp notification and membership renewal dispatch to
 ## ✨ Features
 
 - **Automated Anti-Spam Message Engine:** Deterministically permutes greetings, sentence structures, and sign-offs while preserving the member's name, sender's identity, and the exact form URL.
+- **🔒 Zero-Retention Privacy Architecture:** Personal phone numbers and contact details are strictly kept in volatile browser memory (RAM) and are **permanently deleted/shredded immediately upon dispatch**.
+- **🔒 100% Client-Side Static Execution:** No database, no backend server storage, and no tracking. Everything executes inside your local browser.
+- **🔒 On-Screen Number Masking:** One-click privacy mask (`+254 ••• ••• •71`) to protect member privacy against shoulder-surfing and screen recording leaks.
+- **🔒 Secure Wipe Action:** Instant 1-click purge button to wipe all member queues and form inputs from memory.
 - **Safe Randomized Dispatch Delays:** Configurable delays (e.g. 8–18 seconds) between dispatches to respect WhatsApp rate limits and avoid spam flagging.
 - **WhatsApp Web & Desktop Protocol:** Direct `wa.me` links with URL-encoded messages and tab reuse for seamless single-click or semi-automated dispatches.
 - **Batch Import & Phone Sanitizer:** Paste member lists in various formats (TSV, CSV, raw text) and automatically sanitize international phone formats (e.g. `+254...`).

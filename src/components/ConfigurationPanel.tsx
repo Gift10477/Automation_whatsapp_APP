@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Shield, Clock, Volume2, Sparkles, RefreshCw, Link as LinkIcon, User, Layers, Monitor, CheckCircle, Info } from 'lucide-react';
+import { Settings, Shield, Clock, Volume2, Sparkles, RefreshCw, Link as LinkIcon, User, Layers, Monitor, CheckCircle, Info, Lock, Eye } from 'lucide-react';
 import { DispatchSettings } from '../types';
 
 interface ConfigurationPanelProps {
@@ -53,7 +53,7 @@ export const ConfigurationPanel: React.FC<ConfigurationPanelProps> = ({
 
       {isExpanded && (
         <div className="p-5 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
             {/* Section 1: Identity & Message Variables */}
             <div className="space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
@@ -311,6 +311,82 @@ export const ConfigurationPanel: React.FC<ConfigurationPanelProps> = ({
                   <Sparkles className="w-3 h-3 text-indigo-200" />
                   <span>AI Variations</span>
                 </button>
+              </div>
+            </div>
+
+            {/* Section 4: Privacy & Zero-Retention Security */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                4. Privacy & Zero Retention
+              </h3>
+
+              {/* Privacy Notice Banner */}
+              <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 text-xs text-emerald-950 space-y-1">
+                <div className="font-bold flex items-center gap-1.5 text-emerald-900">
+                  <Shield className="w-4 h-4 text-emerald-600" />
+                  Client-Side RAM Only
+                </div>
+                <p className="text-[11px] text-emerald-900/90 leading-tight">
+                  No data ever touches any database or remote server. Everything lives temporarily in browser RAM and is shredded upon use.
+                </p>
+              </div>
+
+              {/* Setting: Auto-Delete on Send */}
+              <div className="space-y-2">
+                <label className="flex items-start gap-2.5 p-2.5 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={settings.autoDeleteOnSend}
+                    onChange={(e) => onUpdateSettings({ autoDeleteOnSend: e.target.checked })}
+                    className="mt-0.5 text-emerald-600 rounded focus:ring-emerald-500"
+                  />
+                  <div>
+                    <div className="text-xs font-semibold text-slate-900 flex items-center gap-1">
+                      Auto-Delete Once Sent
+                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-bold">Active</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 leading-tight">
+                      Instantly purges the member's phone number and message from memory as soon as dispatched.
+                    </div>
+                  </div>
+                </label>
+
+                {/* Setting: Mask Numbers on Screen */}
+                <label className="flex items-start gap-2.5 p-2.5 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={settings.maskNumbersOnScreen}
+                    onChange={(e) => onUpdateSettings({ maskNumbersOnScreen: e.target.checked })}
+                    className="mt-0.5 text-indigo-600 rounded focus:ring-indigo-500"
+                  />
+                  <div>
+                    <div className="text-xs font-semibold text-slate-900 flex items-center gap-1">
+                      Mask Phone Numbers On-Screen
+                    </div>
+                    <div className="text-[11px] text-slate-500 leading-tight">
+                      Hides digits (<code className="text-slate-700 font-mono">+254 ••• ••• •71</code>) to prevent leaks during screen shares or video captures.
+                    </div>
+                  </div>
+                </label>
+
+                {/* Setting: Clear Paste Box on Import */}
+                <label className="flex items-start gap-2.5 p-2.5 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={settings.clearInputOnImport}
+                    onChange={(e) => onUpdateSettings({ clearInputOnImport: e.target.checked })}
+                    className="mt-0.5 text-indigo-600 rounded focus:ring-indigo-500"
+                  />
+                  <div>
+                    <div className="text-xs font-semibold text-slate-900">
+                      Auto-Clear Paste Box on Import
+                    </div>
+                    <div className="text-[11px] text-slate-500 leading-tight">
+                      Wipes the raw pasted textarea immediately once members are loaded into the queue.
+                    </div>
+                  </div>
+                </label>
               </div>
             </div>
           </div>
